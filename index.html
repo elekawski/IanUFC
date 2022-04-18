@@ -2,21 +2,449 @@
   <head>
     <title>UFC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style type="text/css">
+      body{
+        background-color: #000;
+      }
+
+        .containerSec{
+          background-color: #fff;
+          border-radius: 25px;
+          padding: 20px;
+          margin-top: 30px;
+        }
+
+        h1{
+          color: #cb0a0a;
+          font-style: oblique;
+          font-family: Arial Black;
+          font-size: 24px;
+        }
+
+        #errorValidation{
+          color: #cb0a0a;
+          font-style: oblique;
+        }
+
+        #error1, #error2, #error3, #error4{
+          display: none;
+        }
+
+        #tournamentInfo{
+          display: none;
+        }
+
+        .participantCell{
+          border-radius: 10px;
+          height: 40px;
+          text-align: center;
+          padding-top: 5px;
+
+          margin-left: 30px;
+          margin-right: 30px;
+        }
+
+        .spacer{
+          padding-top: 15px;
+          padding-bottom: 15px;
+          border-color:green;
+        }
+
+        .loser{
+            background-color: #DCDCDC;
+            width: 50%;
+        }
+
+        .winner{
+            background-color: #cb0a0a;
+            color: white;
+        }
+
+        .spacerTitle{
+          color: #cb0a0a;
+          font-weight: bold;
+        }
+
+        #tNotReady{
+          text-align: center;
+          background-color:#CD5C5C;
+          border-radius: 25px;
+          font-size: 24px;
+        }
+
+        #ready{
+          text-align: center;
+          background-color:#cb0a0a;
+          color: #fff;
+          border-radius: 25px;
+          font-size: 24px;
+        }
+
+        .figthInfo{
+          border: solid #333 1px;
+          margin: 30px;
+        }
+
+    </style>
     <script type="text/javascript">
 
-    var numParticipants = 1;
+    var numParticipants = 4;
+    var timer = 0;
+    var numRounds;
+    var tournyReady = false;
+    var participantNames = [];
+    var randParticipants = [];
+    var partID = [];
+    var roundID = 0;
+    var originalRounds;
+    var oNumPart;
+    var winCondList = ["TKO", "KO", "Submission","Unanimous Decision", "Split Decision"];
+
+  function createTable(randParticipants){
+
+      document.getElementById("tournamentInfo").style.display = 'block';
+      document.getElementById("infoEntry").style.display = 'none';
 
 
+
+
+
+      let numOfRounds = numParticipants / 2;
+      let winners = [];
+      let winnersNames = [];
+      originalRounds = numOfRounds;
+      oNumPart = numParticipants;
+      gameN = document.getElementById('nGame').value;
+
+      //Initial table
+      for( let i=0; i < numOfRounds; i++){
+        let setNum = 2*i;
+        let p1 = setNum;
+        let p2 = setNum +1;
+        let winner;
+
+        if(p2<randParticipants.length)
+        {
+          winner = Math.floor(Math.random() * 2) + setNum;
+          document.getElementById('tournamentInfo').innerHTML += '<div class="row" id="spacerTitle' + i + '"><div class="col ">Fight ' + (i+1) +'</div></div>';
+          if(p1 == winner)
+          {
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'a"><div class="col participantCell participant'+partID[p1]+' winner">'+randParticipants[p1]+'</div></div>';
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'b" ><div class="col participantCell participant'+partID[p2]+' loser">'+randParticipants[p2]+'</div></div>' ;
+            let winCond = winReasons(0);
+            let winTime;
+            let m;
+            let s;
+            if(winCond == 3 || winCond == 4){
+              winTime=0;
+            }
+            else {
+              winTime= winReasons(1);
+            }
+            m = Math.floor( winTime / 60);
+            s = winTime % 60;
+            let gameNWin;
+            if(winCond == 3 || winCond == 4){
+              gameNWin=gameN;
+            }
+            else {
+              gameNWin= winReasons(2);
+            }
+            //let fightTimer = winReasons(0);
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row" id="gameInfo' + i + '"><div class="col figthInfo"><strong>Winner: </strong>'+randParticipants[p1]+'<br /><strong>Win condition: </strong>'+winCondList[winCond]+'<br /><strong>Time Remaining: </strong>'+m+" minute(s) "+s+' Second(s)<br /><strong>Round '+gameNWin+'</strong></div></div>';
+          }
+          else
+          {
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'a"><div class="col participantCell participant'+partID[p1]+' loser">'+randParticipants[p1]+'</div></div>';
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'b"><div class="col participantCell participant'+partID[p2]+' winner">'+randParticipants[p2]+'</div></div>' ;
+            let winCond = winReasons(0);
+            let winTime;
+            let m;
+            let s;
+            if(winCond == 3 || winCond == 4){
+              winTime=0;
+            }
+            else {
+              winTime= winReasons(1);
+            }
+            m = Math.floor( winTime / 60);
+            s = winTime % 60;
+            let gameNWin;
+            if(winCond == 3 || winCond == 4){
+              gameNWin=gameN;
+            }
+            else {
+              gameNWin= winReasons(2);
+            }
+            //let fightTimer = winReasons(0);
+            document.getElementById('tournamentInfo').innerHTML += '<div class="row" id="gameInfo' + i + '"><div class="col figthInfo"><strong>Winner: </strong>'+randParticipants[p1]+'<br /><strong>Win condition: </strong>'+winCondList[winCond]+'<br /><strong>Time Remaining: </strong>'+m+" minute(s) "+s+' Second(s)<br /><strong>Round '+gameNWin+'</strong></div></div>';
+          }
+        }
+        else{
+          winner = p1;
+          document.getElementById('tournamentInfo').innerHTML += '<div class="row" id="spacerTitle' + i + '"><div class="col ">Bye</div></div>';
+          document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'a"><div class="col participantCell participant'+partID[p1]+' winner">'+randParticipants[p1]+'</div></div>';
+          document.getElementById('tournamentInfo').innerHTML += '<div class="row spacer" id="fight'+i+'b"><div class="col participantCell></div></div>';
+          document.getElementById('tournamentInfo').innerHTML += '<div class="row" id="gameInfo' + i + '"><div class="col"></div></div>';
+        }
+
+        winnersNames.push(randParticipants[winner]);
+        winners.push(winner);
+        }
+
+        partID = winners;
+        randParticipants = winnersNames;
+        numOfRounds = Math.ceil(randParticipants.length / 2);
+
+
+        let marginSize = originalRounds-numOfRounds;
+        let marginSizeTop = marginSize / 2;
+        let marginSizeBot = marginSizeTop + numOfRounds;
+
+        for(let z=0;z<(numRounds-1);z++)
+        {
+
+          let winnersNames1=[];
+          let winners1=[];
+          let setNum = 0;
+
+          console.log("Round " + z + randParticipants);
+
+          for(let y=0; y < originalRounds; y++)
+          {
+            if (y<marginSizeTop) {
+              document.getElementById('spacerTitle' + y).innerHTML += '<div class="col "">&nbsp;</div>';
+              document.getElementById('fight'+y+'a').innerHTML += '<div class="col participantCell">&nbsp;</div>';
+              document.getElementById('fight'+y+'b').innerHTML += '<div class="col participantCell">&nbsp;</div>';
+              document.getElementById('gameInfo' + y).innerHTML += '<div class="col"></div>';
+            }
+            else if(y>=marginSizeTop && y<marginSizeBot) {
+              let p1 = setNum;
+              let p2 = setNum +1;
+              let winner;
+
+              if(p2<randParticipants.length)
+              {
+                winner = Math.floor(Math.random() * 2) + setNum;
+
+                setNum += 2;
+
+                document.getElementById('spacerTitle' + y).innerHTML += '<div class="col ">Fight ' + (setNum / 2) +'</div>';
+                if(p1 == winner)
+                {
+                  document.getElementById('fight'+y+'a').innerHTML += '<div class="col participantCell participant'+partID[p1]+' winner">'+randParticipants[p1]+'</div>';
+                  document.getElementById('fight'+y+'b').innerHTML += '<div class="col participantCell participant'+partID[p2]+' loser">'+randParticipants[p2]+'</div>' ;
+                  let winCond = winReasons(0);
+                  let winTime;
+                  let m;
+                  let s;
+                  if(winCond == 3 || winCond == 4){
+                    winTime=0;
+                  }
+                  else {
+                    winTime= winReasons(1);
+                  }
+                  m = Math.floor( winTime / 60);
+                  s = winTime % 60;
+                  let gameNWin;
+                  if(winCond == 3 || winCond == 4){
+                    gameNWin=gameN;
+                  }
+                  else {
+                    gameNWin= winReasons(2);
+                  }
+                  document.getElementById('gameInfo' + y).innerHTML += '<div class="col figthInfo"><strong>Winner: </strong>'+randParticipants[p1]+'<br /><strong>Win condition: </strong>'+winCondList[winCond]+'<br /><strong>Time Remaining: </strong>'+m+" minute(s) "+s+' Second(s)<br /><strong>Round '+gameNWin+'</strong></div>';
+                }
+                else
+                {
+                  document.getElementById('fight'+y+'a').innerHTML += '<div class="col participantCell participantCellTop participant'+partID[p1]+' loser">'+randParticipants[p1]+'</div>';
+                  document.getElementById('fight'+y+'b').innerHTML += '<div class="col participantCell participantCellBot participant'+partID[p2]+' winner">'+randParticipants[p2]+'</div>' ;
+                  let winCond = winReasons(0);
+                  let winTime;
+                  let m;
+                  let s;
+                  if(winCond == 3 || winCond == 4){
+                    winTime=0;
+                  }
+                  else {
+                    winTime= winReasons(1);
+                  }
+                  m = Math.floor( winTime / 60);
+                  s = winTime % 60;
+                  let gameNWin;
+                  if(winCond == 3 || winCond == 4){
+                    gameNWin=gameN;
+                  }
+                  else {
+                    gameNWin= winReasons(2);
+                  }
+                  document.getElementById('gameInfo' + y).innerHTML += '<div class="col figthInfo"><strong>Winner: </strong>'+randParticipants[p1]+'<br /><strong>Win condition: </strong>'+winCondList[winCond]+'<br /><strong>Time Remaining: </strong>'+m+" minute(s) "+s+' Second(s)<br /><strong>Round '+gameNWin+'</strong></div>';
+                }
+              }
+              else{
+                winner = p1;
+                document.getElementById('spacerTitle' + y).innerHTML += '<div class="col ">Bye</div>';
+                document.getElementById('fight'+y+'a').innerHTML += '<div class="col participantCell participantCellTop participant'+partID[p1]+' winner">'+randParticipants[p1]+'</div>';
+                document.getElementById('fight'+y+'b').innerHTML += '<div class="col participantCell participantCellBot">&nbsp;</div>';
+                document.getElementById('gameInfo' + y).innerHTML += '<div class="col"></div>';
+              }
+
+              winnersNames1.push(randParticipants[winner]);
+              winners1.push(winner);
+            }
+            else{
+              document.getElementById('spacerTitle' + y).innerHTML += '<div class="col "">&nbsp;</div>';
+              document.getElementById('fight'+y+'a').innerHTML += '<div class="col participantCell">&nbsp;</div>';
+              document.getElementById('fight'+y+'b').innerHTML += '<div class="col participantCell">&nbsp;</div>';
+              document.getElementById('gameInfo' + y).innerHTML += '<div class="col"></div>';
+            }
+          }
+          partID = winners1;
+          randParticipants = winnersNames1;
+          console.log(winnersNames1);
+
+          numOfRounds = Math.ceil(randParticipants.length / 2);
+          marginSize = originalRounds-numOfRounds;
+          marginSizeTop = marginSize / 2;
+          marginSizeBot = marginSizeTop + numOfRounds;
+        }
+
+
+    }
+
+    function winReasons(calcR)
+    {
+      if(calcR==0)
+      {
+        let reason = Math.floor(Math.random() * 5);
+        return reason;
+      }
+      if(calcR==1)
+      {
+        let reason = timer - Math.floor(Math.random() * timer);
+        return reason;
+      }
+      if(calcR==2)
+      {
+        let reason = Math.floor(Math.random() * gameN) + 1;
+        return reason;
+      }
+    }
+
+    //Randomize the participant names and assign them an IS
+    function randomizeParticipants(){
+      let currentIndex = numParticipants, randomIndex;
+      while(currentIndex != 0)
+      {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [randParticipants[currentIndex], randParticipants[randomIndex]] = [
+          randParticipants[randomIndex], randParticipants[currentIndex]];
+      }
+
+      for(let i = 0; i < numParticipants; i++)
+      {
+        partID.push(i);
+      }
+    }
+
+    //Check if form is complete and that there are no errors
+    function formValidation(done){
+      timer = document.getElementById('nSeconds').value + (document.getElementById('nMinutes').value * 60);
+      numRounds = document.getElementById('showRound').value;
+      gameN = document.getElementById('nGame').value;
+
+      //No errors - create participants list
+      if(done == true && timer > 0 && numParticipants > 3 && gameN > 0)
+      {
+        document.getElementById("error1").style.display = 'none';
+        document.getElementById("error2").style.display = 'none';
+        document.getElementById("error3").style.display = 'none';
+        document.getElementById("error4").style.display = 'none';
+
+        for(let i=0; i<numParticipants;i++)
+        {
+          var nameTemp =   document.getElementById('partName' + i).value;
+          participantNames.push(nameTemp);
+        }
+        document.getElementById('startFight').innerHTML ='<div class="col" id="ready" onclick="startTournament()">Fight!</div>';
+      }
+      //Still errors - display errors
+      else {
+        if(numParticipants < 4){
+          document.getElementById("error1").style.display = 'block';
+        }
+        else {
+          document.getElementById("error1").style.display = 'none';
+        }
+        if(timer == 0){
+          document.getElementById("error2").style.display = 'block';
+        }
+        else {
+          document.getElementById("error2").style.display = 'none';
+        }
+        if(done == false){
+        document.getElementById("error3").style.display = 'block';
+        }
+        else {
+          document.getElementById("error3").style.display = 'none';
+        }
+        if(gameN == 0){
+          document.getElementById("error4").style.display = 'block';
+        }
+        else {
+            document.getElementById("error4").style.display = 'none';
+        }
+        document.getElementById('startFight').innerHTML ='<div class="col" id="tNotReady">Fight!</div>';
+      }
+    }
+
+    function startTournament()
+    {
+      randParticipants = participantNames;
+      randomizeParticipants();
+      createTable(randParticipants);
+    }
+
+      //Calculate rounds passed of number of participants and display the number of name fields based on number
       function f_nParticipant(){
         numParticipants = document.getElementById('nParticipants').value;
+
+        //N x (N-1)/2
+        numRounds = Math.ceil(Math.log2(numParticipants));
+
+        document.getElementById('showRound').value = numRounds;
+
         printNameInput();
       }
 
+      //For validation - does all name field have a value?
+      function f_checkParticipant(){
+        var done = true;
+        for(let i= 0; i < numParticipants; i++)
+        {
+          if(done == true && document.getElementById('partName' + i).value == "")
+          {
+            done = false;
+          }
+
+
+        }
+        formValidation(done);
+      }
+
+      //Print the number of name fields based on number of participants
       function printNameInput(){
         document.getElementById('nameRepeatDiv').innerHTML ="";
         for(let i= 0; i < numParticipants; i++)
         {
-          document.getElementById('nameRepeatDiv').innerHTML += '<label for="partName' + i +  '">Participant ' + (i + 1) +  ': </label><input type="text" id="partName' + i +  '" name="partName' + i +  '" ><br / >';
+          document.getElementById('nameRepeatDiv').innerHTML += '<label for="partName' + i +  '">Participant ' + (i + 1) +  ': </label><input type="text" class="form-control" onchange="f_checkParticipant()"  id="partName' + i +  '" name="partName' + i +  '" ><br / >';
+        }
+
+        function tournamentGenerator(){
+          document.getElementById("infoEntry").style.display = 'none';
         }
 
       }
@@ -26,20 +454,93 @@
 
   <body onload="printNameInput()">
     <div class="container">
-      <form name="ufcForm">
 
-        <div class="row">
-            <div class"col">
-              <label for="nParticipants">Number of participants: </label>
-            </div>
-            <div class"col">
-              <input type="Number" id="nParticipants" name="nParticipants" value="1" min="1" onclick="f_nParticipant()">
-            </div>
-        </div>
+      <div id="tournamentInfo" class="containerSec">
 
-        <div id="nameRepeatDiv"></div>
-        <input type="submit">
-      </form>
+
+      </div>
+
+      <div id="infoEntry" class="containerSec">
+        <form name="ufcForm">
+
+          <div class="row">
+            <div id="col">
+              <h1>Tournament Info</h1>
+            </div>
+          </div>
+
+          <div class="form-group row">
+                <label for="nParticipants" class="col-sm-2 col-form-label">Number of participants: </label>
+              <div class="col-sm-10">
+                <input type="Number" id="nParticipants" name="nParticipants" value="4" min="4" onchange="f_nParticipant()" class="form-control">
+              </div>
+          </div>
+
+          <div class="row">
+            <div id="col">
+              <br />
+            </div>
+          </div>
+
+          <div class="form-group row">
+              <div class="col-sm-2"><p>Round Timer:</p></div>
+                <label for="nMinutes" class="col-sm-2 col-form-label">Minutes: </label>
+              <div class="col-sm-3">
+                <input type="number" id="nMinutes" name="nMinutes" value="5" min="0" class="form-control" onchange="f_checkParticipant()">
+              </div>
+              <label for="nSeconds" class="col-sm-2 col-form-label">Seconds: </label>
+            <div class="col-sm-3">
+              <input type="number" id="nSeconds" name="nSeconds" value="0" min="0" max="59  " class="form-control" onchange="f_checkParticipant()">
+            </div>
+          </div>
+
+          <div class="row">
+            <div id="col">
+              <br />
+            </div>
+          </div>
+
+          <div class="form-group row">
+                <label for="nGame" class="col-sm-2 col-form-label">Number of Rounds: </label>
+              <div class="col-sm-10">
+                <input type="Number" id="nGame" name="nGame" value="3" min="1" onclass="form-control" >
+              </div>
+          </div>
+
+          <div class="row">
+            <div id="col">
+              <br />
+            </div>
+          </div>
+
+          <div class="form-group row">
+                <label for="nRounds" class="col-sm-2 col-form-label">Number of Games: </label>
+              <div class="col-sm-10">
+                <input type="Number" id="showRound" name="nRounds" value="2" onclass="form-control" disabled>
+              </div>
+          </div>
+
+
+
+          <div class="row">
+            <div id="col">
+              <h1>List of participants</h1>
+            </div>
+          </div>
+
+          <div id="nameRepeatDiv"></div>
+
+          <div id="errorValidation">
+            <p id="error1">Must have at least 4 participants.</p>
+            <p id="error2">Round timer must be greater than 0 seconds.</p>
+            <p id="error4">ust have at least 1 round.</p>
+            <p id="error3">Enter all participants name.</p>
+          </div>
+          <div class="row" id="startFight"><div class="col" id="tNotReady">Fight!</div></div>
+        </form>
+      </div>
+
+
     </div>
 
   </body>
