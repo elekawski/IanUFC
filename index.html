@@ -98,7 +98,40 @@
     var roundID = 0;
     var originalRounds;
     var oNumPart;
-    var winCondList = ["TKO", "KO", "Submission","Unanimous Decision", "Split Decision"];
+    var winCondList = [
+"Unanimous decision 30-27, 30-27, 30-27",
+"Unanimous decision 29-28, 29-28, 29-28",
+"Majority decision 29-28, 29-28, 28-28",
+"Split Decision 29-28, 28-29, 29-28",
+"KO (Punch)", "KO (Hook)",
+"KO (Uppercut)",
+"KO (Overhand)",
+"KO (Spinning Back Fist)",
+"KO (Elbow)",
+"KO (Knee)",
+"KO (Head Kick)","TKO (Ground & Pound)",
+"TKO (Doctor Stoppage)",
+"TKO (Injury)",
+"Tapout (Rear Naked Choke)",
+"Tapout (Bulldog Choke)",
+"Tapout (D'arce Choke)",
+"Tapout (Anaconda Choke)",
+"Tapout (Von Fluke Choke)",
+"Tapout (Guillotine Choke)",
+"Tapout (Triangle Choke)",
+"Tapout (Arm Triangle)",
+"Tapout (Gogoplata)",
+"Tapout (Peruvian Neck Tie)",
+"Tapout (Japanese Neck Tie)",
+"Tapout Armbar)",
+"Tapout (Kimura)",
+"Tapout (Americana)",
+"Tapout (Omaplata)",
+"Tapout (Twister)",
+"Tapout (Kneebar)",
+"Tapout (Ankle Lock)",
+"Tapout (Heel Hook)"
+];
 
   function createTable(randParticipants){
 
@@ -135,7 +168,7 @@
             let winTime;
             let m;
             let s;
-            if(winCond == 3 || winCond == 4){
+            if(winCond < 4){
               winTime=0;
             }
             else {
@@ -144,7 +177,7 @@
             m = Math.floor( winTime / 60);
             s = winTime % 60;
             let gameNWin;
-            if(winCond == 3 || winCond == 4){
+            if(winCond < 4){
               gameNWin=gameN;
             }
             else {
@@ -161,7 +194,7 @@
             let winTime;
             let m;
             let s;
-            if(winCond == 3 || winCond == 4){
+            if(winCond < 4){
               winTime=0;
             }
             else {
@@ -170,7 +203,7 @@
             m = Math.floor( winTime / 60);
             s = winTime % 60;
             let gameNWin;
-            if(winCond == 3 || winCond == 4){
+            if(winCond < 4){
               gameNWin=gameN;
             }
             else {
@@ -316,7 +349,7 @@
     {
       if(calcR==0)
       {
-        let reason = Math.floor(Math.random() * 5);
+        let reason = Math.floor(Math.random() * winCondList.length);
         return reason;
       }
       if(calcR==1)
